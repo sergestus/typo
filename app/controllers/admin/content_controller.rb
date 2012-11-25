@@ -6,6 +6,87 @@ class Admin::ContentController < Admin::BaseController
 
   cache_sweeper :blog_sweeper
 
+  def merge
+
+    id1 = params[:id]
+    id2 = params[:merge_with]
+
+    article1 = Article.get_or_build_article(id1)
+    article2 = Article.get_or_build_article(id2)
+    @article = Article.get_or_build_article(nil)
+    @article.text_filter = current_user.text_filter if current_user.simple_editor?
+
+    @article.title = article1.title;
+    @article.author = article1.author;
+    @article.body = article1.body+article2.body;
+
+    printf "!!!! article1 = " + article1.to_s + "\n"
+    printf "!!!! article2 = " + article2.to_s + "\n"
+    printf "!!!! result_article = " + @article.to_s + "\n"
+     
+    #@article.state = "draft" if @article.draft
+    #@article.keywords = Tag.collection_to_string @article.tags
+    #@article.attributes = params[:article]
+    # TODO: Consider refactoring, because double rescue looks... weird.
+        
+    @article.published_at = DateTime.strptime(params[:article][:published_at], "%B %e, %Y %I:%M %p GMT%z").utc rescue Time.parse(params[:article][:published_at]).utc rescue nil
+
+    #set_article_author
+    #save_attachments
+
+    if @article.save
+      destroy_the_draft unless @article.draft
+      set_article_categories
+      #set_the_flash
+      redirect_to :action => 'index'
+      return
+    end
+
+=begin
+    id = params[:article][:id] if params[:article] && params[:article][:id]
+    @article = Article.get_or_build_article(id)
+    @article.text_filter = current_user.text_filter if current_user.simple_editor?
+
+    @post_types = PostType.find(:all)
+    if request.post?
+      if params[:article][:draft]
+        get_fresh_or_existing_draft_for_article
+      else
+        if not @article.parent_id.nil?
+          @article = Article.find(@article.parent_id)
+        end
+      end
+    end
+
+    @article.keywords = Tag.collection_to_string @article.tags
+    @article.attributes = params[:article]
+    # TODO: Consider refactoring, because double rescue looks... weird.
+        
+    @article.published_at = DateTime.strptime(params[:article][:published_at], "%B %e, %Y %I:%M %p GMT%z").utc rescue Time.parse(params[:article][:published_at]).utc rescue nil
+
+    if request.post?
+      set_article_author
+      save_attachments
+      
+      @article.state = "draft" if @article.draft
+
+      if @article.save
+        destroy_the_draft unless @article.draft
+        set_article_categories
+        set_the_flash
+        redirect_to :action => 'index'
+        return
+      end
+    end
+
+    @images = Resource.images_by_created_at.page(params[:page]).per(10)
+    @resources = Resource.without_images_by_filename
+    @macros = TextFilter.macro_filters
+    render 'new'
+=end
+    redirect_to :action => :index
+  end
+
   def auto_complete_for_article_keywords
     @items = Tag.find_with_char params[:article][:keywords].strip
     render :inline => "<%= raw auto_complete_result @items, 'name' %>"
@@ -240,4 +321,5 @@ class Admin::ContentController < Admin::BaseController
   def setup_resources
     @resources = Resource.by_created_at
   end
+
 end

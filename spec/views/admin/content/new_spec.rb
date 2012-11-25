@@ -20,6 +20,8 @@ describe "admin/content/new.html.erb" do
   end
 
   it "renders with no resources or macros" do
+    @fake_user = mock("admin")
+    User.stub(:current_user).and_return(@fake_user)
     assign(:images, [])
     assign(:macros, [])
     assign(:resources, [])
@@ -27,6 +29,8 @@ describe "admin/content/new.html.erb" do
   end
 
   it "renders with image resources" do
+    @fake_user = mock("admin")
+    User.stub(:current_user).and_return(@fake_user)
     # FIXME: Nasty. Thumbnail creation should not be controlled by the view.
     img = mock_model(Resource, :filename => "foo", :create_thumbnail => nil)
     assign(:images, [img])

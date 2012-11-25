@@ -11,6 +11,12 @@ describe Admin::ContentController do
       response.should render_template('index')
     end
 
+    it 'should render template index for merge action' do
+      pending
+      #get 'merge'
+      #response.should render_template('index')
+    end
+
     it 'should see all published in index' do
       get :index, :search => {:published => '0', :published_at => '2008-08', :user_id => '2'}
       response.should render_template('index')
@@ -466,6 +472,9 @@ describe Admin::ContentController do
   describe 'with admin connection' do
 
     before do
+      @fake_user = mock("admin")
+      User.stub(:current_user).and_return(@fake_user)
+
       Factory(:blog)
       #TODO delete this after remove fixture
       Profile.delete_all
@@ -612,6 +621,8 @@ describe Admin::ContentController do
   describe 'with publisher connection' do
 
     before :each do
+      @fake_user = mock("user")
+      User.stub(:current_user).and_return(@fake_user)
       Factory(:blog)
       @user = Factory(:user, :text_filter => Factory(:markdown), :profile => Factory(:profile_publisher))
       @article = Factory(:article, :user => @user)

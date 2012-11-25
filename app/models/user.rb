@@ -54,6 +54,9 @@ class User < ActiveRecord::Base
     self.settings ||= {}
   end
 
+  def self.current_user(user_id)
+    self.find(user_id).login
+  end
 
   def self.authenticate(login, pass)
     find(:first,

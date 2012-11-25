@@ -38,6 +38,10 @@ class Admin::ContentController < Admin::BaseController
       destroy_the_draft unless @article.draft
       set_article_categories
       #set_the_flash
+
+      Article.delete(id1)
+      Article.delete(id2)
+
       redirect_to :action => 'index'
       return
     end

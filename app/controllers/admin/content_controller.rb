@@ -16,7 +16,7 @@ class Admin::ContentController < Admin::BaseController
     @article = Article.get_or_build_article(nil)
     @article.text_filter = current_user.text_filter if current_user.simple_editor?
 
-    @article.title = article1.title;
+    @article.title = "new "+article1.title;
     @article.author = article1.author;
     @article.body = article1.body+article2.body;
 

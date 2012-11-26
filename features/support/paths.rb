@@ -28,12 +28,15 @@ module NavigationHelpers
     when /^the Feedbak page/
       '/admin/feedback'
 
-    when /^the edit page for "(.*)"/
+    when /^the edit page for article "([^"]*)"$/
       '/admin/content/edit/'+ Article.find_by_title($1).id.to_s
 
-    when /^the the edit page for article "(.*)" with id "(.*)" written by "(.*)"/
+    when /^the edit page for article "([^"]*)" with id "([^"]*)" written by "([^"]*)"$/
        Article.find_by_title_and_author($1,$3).id.to_s.should == $2 
       '/admin/content/edit/'+ $2        
+
+    when /^the edit page for article "([^"]*)" written by "([^"]*)"$/        
+      '/admin/content/edit/'+ Article.find_by_title_and_author($1,$2).id
 
     when /admin panel/
       '/admin'

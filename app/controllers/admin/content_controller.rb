@@ -34,11 +34,15 @@ class Admin::ContentController < Admin::BaseController
     #set_article_author
     #save_attachments
 
+    
     if @article.save
       destroy_the_draft unless @article.draft
       set_article_categories
       #set_the_flash
-
+      Comment.find_by_article_id(id1,id2) do |comment|
+        comment.article_id(@article.id)
+        comment.save
+      end
       Article.delete(id1)
       Article.delete(id2)
 

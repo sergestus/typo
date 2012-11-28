@@ -28,6 +28,9 @@ module NavigationHelpers
     when /^the Feedbak page/
       '/admin/feedback'
 
+    when /^the new Categories page/
+      '/admin/categories/new'
+
     when /^the edit page for article "([^"]*)"$/
       '/admin/content/edit/'+ Article.find_by_title($1).id.to_s
 

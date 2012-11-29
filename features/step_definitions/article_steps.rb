@@ -9,3 +9,10 @@ Given /^the folloing comments exist:$/ do |comments_table|
                 Comment.create!(comment)
         end
 end
+=begin
+Given /^the folloing categories exist:$/ do |categories_table|
+        categories_table.hashes.each do |category|
+                Category.create!(category)
+        end
+end
+=end
